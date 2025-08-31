@@ -1,0 +1,313 @@
+/* === Общий контейнер: боковые отступы максимум 30px === */
+.main {
+    box-shadow: 0 12px 50px rgba(0, 0, 0, .35);
+    overflow: hidden;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    /* раньше было padding:24px; делаем адаптивно, но не больше 30px */
+    padding: clamp(12px, 3vw, 30px);
+    background: linear-gradient(45deg, rgba(5, 6, 4, 1) 0%, rgba(96, 40, 168, 1) 100%);
+}
+
+.logo {
+    font-size: 199px;
+}
+
+/* Bootstrap-обёртка без лишних внутренних отступов */
+.container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+    gap: 0;
+}
+
+/* Правая панель (форма + погода) — инпут сверху + отступ вниз */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 0 20px; /* убрал лишний внутренний паддинг по бокам, его даёт .main */
+    min-height: 320px;
+    max-height: none; /* чтобы не резалось на высоте */
+    overflow: visible;
+}
+
+/* Форма сверху и с отступом от карточек */
+.form form {
+    order: 0;
+    margin-bottom: 12px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Инпут — тянется, но не шире 420px */
+input[type="text"] {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid #ffffff;
+    width: min(100%, 420px);
+    padding: 6px 2px 8px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 24px;
+    outline: none;
+}
+
+/* ===== Карточки погоды: ровно 4 в ряд ===== */
+.weather-cards {
+    order: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+/* Адаптив: 2 в ряд на средних, 1 в ряд на узких */
+@media (max-width: 992px) {
+    .weather-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .weather-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Внешний вид карточек */
+.weather-cards .card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform .2s;
+
+}
+
+.weather-cards .card:hover {
+    transform: translateY(-4px);
+}
+
+.weather-cards img,
+.weather-cards .icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+}
+
+.weather-cards p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.weather-cards small {
+    display: block;
+    font-size: 13px;
+    color: #ccc;
+}
+
+/* Левый блок Info — без лишнего бокового паддинга, общий паддинг у .main */
+.info {
+    background-blend-mode: multiply;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 0;
+    min-height: 320px;
+    color: #fff;
+
+}
+
+
+/* ====== Кнопка ====== */
+button {
+    padding: 15px 40px;
+    border: 4px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.65);
+    /* фон под твой градиент */
+    background: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+
+    transition: transform .15s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .35);
+}
+
+button:active {
+    transform: translateY(1px) scale(.98);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.info h1 {
+    margin: 0 0 8px;
+    font-weight: 800;
+    line-height: 1.1;
+    font-size: clamp(22px, 3.2vw, 32px); /* адаптивный размер */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+}
+
+.info p {
+    margin: 0;
+    color: #e4e4e4;
+    font-weight: 600;
+    font-size: clamp(13px, 1.6vw, 16px);
+}
+
+.infoWeath h3 {
+    color: #fff;
+}
+
+.infoWeath p {
+    color: #fff;
+}
+
+.infoWeath small {
+    color: #fff;
+}
+
+.topbar {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto 20px auto;
+
+    display: flex;
+    flex-direction: row; /* в ряд */
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar .logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.topbar form {
+    flex: 1; /* форма занимает всю ширину справа */
+    display: flex;
+    gap: 12px;
+}
+
+.topbar input[type="text"] {
+    flex: 1; /* инпут растягивается */
+}
+
+h1 {
+    color: #fff;
+    font-size: 95px;
+}
+
+.hourly-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+
+}
+
+/* Две симметричные колонки */
+.content {
+    display: flex;
+    gap: 24px; /* расстояние между колонками */
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.content .column {
+    flex: 1; /* каждая колонка занимает 50% */
+    min-width: 0; /* фикс для переполнения */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Левая и правая колонка можно отдельно стилизовать */
+.column.left {
+    padding-right: 12px;
+}
+
+.column.right {
+    margin-top: 0;
+    padding-left: 12px;
+
+}
+
+/* Адаптив: на маленьких экранах в одну колонку */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .column.left, .column.right {
+        padding: 0;
+    }
+}
+
+.formWrapper {
+    width: 100%;
+}
+
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(45deg, rgba(5, 6, 4, 1) 0%, rgba(96, 40, 168, 1) 100%);
+    color: white;
+    border-radius: 6px;
+    margin: 0;
+    padding: 4px 0;
+    list-style: "none";
+    z-index: 10;
+}
+
+
+.logo {
+    text-align: center;
+
+}
+
+option {
+    background: transparent;
+}
+
+.langSwitcher {
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 8px;
+    padding: 6px 10px;
+
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .1s;
+}
