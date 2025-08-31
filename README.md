@@ -1,12 +1,60 @@
-# React + Vite
+# 🌤️ WindyApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern **React** weather application with **multi-language support** powered by [OpenWeather API](https://openweathermap.org/).
 
-Currently, two official plugins are available:
+![screenshot](./WindyAppDemoScreen.png) 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🔎 **City search with autocomplete** (OpenWeather Geocoding API)
+- 🌡️ **Current weather** (temperature, feels like, humidity, wind, clouds)
+- ⏳ **Hourly forecast** (next few hours)
+- 📅 **6-day forecast** (min/max temperature, icons, description)
+- 🌍 **Language switcher** (EN / RU / DE)
+- 🕒 **Localized date & time** formats
+- 📱 Fully responsive layout
+
+---
+
+## 🛠️ Tech Stack
+
+- [React 18](https://react.dev/)
+- [Vite](https://vitejs.dev/) (build tool)
+- [OpenWeather API](https://openweathermap.org/api) (Weather, Forecast, Geocoding)
+- [MUI Icons](https://mui.com/material-ui/material-icons/)
+- [Framer Motion](https://www.framer.com/motion/) for animations
+- React Context + `useI18n` hook for multi-language support
+
+---
+---
+
+
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/username/windy-app.git
+   cd windy-app
+
+
+
+2. **Install dependencies**
+
+npm install
+
+3. **Set up your OpenWeather API key in src/utils/constants.jsx: **
+export const apiKey = "YOUR_API_KEY_HERE";
+export const baseUrl = "https://api.openweathermap.org/data/2.5/";
+
+4. **Start the development server**
+
+npm run dev
+
+
+5. Open your browser at http://localhost:5173
+---
