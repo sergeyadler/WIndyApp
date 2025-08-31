@@ -6,8 +6,10 @@ import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 import WeatherIcon from "./WeatherIcon.jsx";
 import WeatherCards from "./WeatherCards.jsx";
 import HourlyForecast from "./HourlyForecast.jsx";
+import {useI18n} from "../utils/I18nProvider.jsx";
 
 const Weather = ({data, lastUpdated, error}) => {
+    const {t} = useI18n();
     if (error) return <p className="error">{error}</p>;
     if (!data) return <p className="infoWeath">Введите город и нажмите кнопку.</p>;
 
@@ -38,7 +40,7 @@ const Weather = ({data, lastUpdated, error}) => {
 
 
             {lastUpdated && (
-                <small>Updated: {new Date(lastUpdated).toLocaleTimeString()}</small>
+                <small>{t("updated")}: {new Date(lastUpdated).toLocaleTimeString()}</small>
             )}
         </div>
     );
