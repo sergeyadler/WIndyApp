@@ -1,50 +1,38 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {apiKey, baseUrl} from "../utils/constants.jsx";
-import CityInput from "./CityInput.jsx";
+import React, { useEffect, useRef} from 'react';
+
 import Weather from "./Weather.jsx";
 import HourlyForecast from "./HourlyForecast.jsx";
 import {useI18n} from "../utils/I18nProvider.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchWeather} from "../actions/weatherThunks.js";
 
-const Data = ({city, setLoading}) => {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState('');
-    const [lastUpdated, setLastUpdated] = useState(null);
-    const timerRef = useRef(null);
+const Data = () => {
+    const dispatch = useDispatch();
     const {owmLang} = useI18n();
-    const fetchData = useCallback(async (q) => {
-        if (!q) return;
-        setLoading(true);
-        setError('');
 
-        try {
-
-            const url = `${baseUrl}weather?q=${encodeURIComponent(q)}&appid=${apiKey}&units=metric&lang=${owmLang}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            setData(data);
-            setLastUpdated(Date.now());
-        } catch (e) {
-            setError(e.message || 'Unknown error');
-            setData(null);
-        } finally {
-            setLoading(false);
-        }
-    }, [owmLang, setLoading]);
-
+    // читаем из Redux
+    const city = useSelector((s) => s.ui.city);
+    const error = useSelector((s) => s.ui.error);
+    const current = useSelector((s) => s.weather.current);
+    const lastUpdated = useSelector((s) => s.weather.updatedAt);
+    const timerRef = useRef(null);
 
     useEffect(() => {
-        fetchData(city);
+        dispatch(fetchWeather(city, owmLang));
         clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => fetchData(city), 1000 * 60 * 5);
+        timerRef.current = setInterval(() => {
+            dispatch(fetchWeather(city, owmLang));
+        }, 1000 * 60 * 5);
 
         return () => clearInterval(timerRef.current);
-    }, [city, fetchData]);
+
+    }, [city, owmLang, dispatch]);
 
     return (
         <div>
             {/*<CityInput onSubmit={setCity} loading={loading}/>*/}
-            <Weather data={data} lastUpdated={lastUpdated} error={error}/>
-            <HourlyForecast city={city} take={6} lang="en" />
+            <Weather data={current} lastUpdated={lastUpdated} error={error}/>
+            <HourlyForecast city={city} take={6} lang="en"/>
         </div>
     );
 };

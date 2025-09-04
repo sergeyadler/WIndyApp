@@ -1,61 +1,73 @@
-import React, { useEffect, useState } from "react";
-import {apiKey, baseUrl} from "../utils/constants.jsx";
+import React from "react";
+
 import HourlyItem from "./HourlyItem.jsx";
-import {useI18n} from "../utils/I18nProvider.jsx"; // используем ту же карточку
+import {useI18n} from "../utils/I18nProvider.jsx";
+import {useSelector} from "react-redux"; // используем ту же карточку
 
-function groupByDate(list) {
-    const map = new Map();
-    list.forEach((item) => {
-        const day = item.dt_txt.split(" ")[0]; // YYYY-MM-DD
-        if (!map.has(day)) map.set(day, []);
-        map.get(day).push(item);
-    });
-    return Array.from(map.entries()).map(([date, slices]) => ({ date, slices }));
-}
+const pickRepresentative = (slices) => {
+    const noon = slices.find((s) => s.dt_txt?.includes("12:00:00"));
+    return noon ?? slices[Math.floor(slices.length / 2)] ?? slices[0];
+};
 
-const DailyForecast = ({ city, days}) => {
-    const { t, owmLang, dateLocale } = useI18n();
-    const [daily, setDaily] = useState([]);
+const summarizeDay = ({ date, slices }) => {
+    let tmax = -Infinity;
+    let tmin = Infinity;
 
-    useEffect(() => {
-        fetch(
-            `${baseUrl}forecast?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=${owmLang}`
-        )
-            .then((res) => res.json())
-            .then((data) => {
-                const groups = groupByDate(data.list || []);
-                const prepared = groups.slice(0, days).map(({ date, slices }) => {
-                    const tmin = Math.min(...slices.map((s) => s.main.temp_min));
-                    const tmax = Math.max(...slices.map((s) => s.main.temp_max));
-                    const chosen = slices.find((s) =>
-                        s.dt_txt.includes("12:00:00")
-                    ) || slices[0];
-                    return {
-                        date,
-                        tmin: Math.round(tmin),
-                        tmax: Math.round(tmax),
-                        icon: chosen.weather[0].icon,
-                        desc: chosen.weather[0].description,
-                    };
-                });
-                setDaily(prepared);
-            });
-    }, [city, days, owmLang, dateLocale]);
+    for (const s of slices) {
+        const mx = s.main?.temp_max ?? s.main?.temp ?? -Infinity;
+        const mn = s.main?.temp_min ?? s.main?.temp ?? Infinity;
+        if (mx > tmax) tmax = mx;
+        if (mn < tmin) tmin = mn;
+    }
+
+    const rep = pickRepresentative(slices);
+    const icon = rep?.weather?.[0]?.icon;
+    const desc = rep?.weather?.[0]?.description ?? "—";
+
+    return {
+        date,
+        tmin: Number.isFinite(tmin) ? Math.round(tmin) : null,
+        tmax: Number.isFinite(tmax) ? Math.round(tmax) : null,
+        icon,
+        desc,
+    };
+};
+
+
+const DailyForecast = ({ days = 6 }) => {
+    const { t, dateLocale } = useI18n();
+    const loading = useSelector((s) => s.ui.loading);
+    const dailyGroups = useSelector((s) => s.weather.daily) || [];
+
+    if (!dailyGroups.length && loading) {
+        return (
+            <div className="owm-card">
+                <h4 style={{ margin: "20px 0 12px", color: "white" }}>{t("dailyForecast")}</h4>
+                <div>Loading…</div>
+            </div>
+        );
+    }
+
+    if (!dailyGroups.length) return null;
+
+    const prepared = dailyGroups.slice(0, days).map(summarizeDay);
 
     return (
         <div className="owm-card">
             <h4 style={{ margin: "20px 0 12px", color: "white" }}>{t("dailyForecast")}</h4>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
-                {daily.map((d, idx) => {
-                    const dateObj = new Date(d.date + "T00:00:00");
+                {prepared.map((d, idx) => {
+                    const dateObj = new Date(`${d.date}T00:00:00`);
                     const weekday = dateObj.toLocaleDateString(dateLocale, { weekday: "long" });
                     const dayMonth = dateObj.toLocaleDateString(dateLocale, { day: "2-digit", month: "2-digit" });
+
+                    const tempText = d.tmax != null && d.tmin != null ? `${d.tmax}° / ${d.tmin}°` : "—";
 
                     return (
                         <HourlyItem
                             key={idx}
                             iconCode={d.icon}
-                            temp={`${d.tmax}° / ${d.tmin}°`}
+                            temp={tempText}
                             desc={d.desc}
                             time={`${weekday}, ${dayMonth}`}
                         />

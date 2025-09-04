@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { baseUrl, apiKey } from "../utils/constants.jsx";
-import WeatherIcon from "./WeatherIcon.jsx";
-import Card from "./Card.jsx";
+import React from "react";
+
 import HourlyItem from "./HourlyItem.jsx";
 import {useI18n} from "../utils/I18nProvider.jsx";
+import {useSelector} from "react-redux";
 
 
-const HourlyForecast = ({ city }) => {
-    const { t, owmLang, dateLocale } = useI18n();
-    const [items, setItems] = useState([]);
+const HourlyForecast = ({  take = 4  }) => {
+    const { t, dateLocale } = useI18n();
+    const loading = useSelector((s) => s.ui.loading);
+    const hourly = useSelector((s) => s.weather.hourly) || [];
 
-    useEffect(() => {
-        fetch(`${baseUrl}forecast?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=${owmLang}`)
-            .then((res) => res.json())
-            .then((data) => setItems((data.list || []).slice(0, 4)));
-    }, [city, owmLang]);
+    const items = hourly.slice(0, take);
+
+    if (!items.length && loading) return <div>Loading...</div>;
+    if (!items.length) return null;
+
+
 
     return (
         <div className="owm-card-h mt-1">
