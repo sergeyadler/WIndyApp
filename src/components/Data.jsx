@@ -5,6 +5,8 @@ import HourlyForecast from "./HourlyForecast.jsx";
 import {useI18n} from "../utils/I18nProvider.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchWeather} from "../actions/weatherThunks.js";
+//import CityInput from "./CityInput.jsx";
+//import {setCity} from "../actions/windyActions.js";
 
 const Data = () => {
     const dispatch = useDispatch();
@@ -12,6 +14,7 @@ const Data = () => {
 
     // читаем из Redux
     const city = useSelector((s) => s.ui.city);
+    //const loading = useSelector(state => state.ui.loading);
     const error = useSelector((s) => s.ui.error);
     const current = useSelector((s) => s.weather.current);
     const lastUpdated = useSelector((s) => s.weather.updatedAt);
@@ -30,9 +33,9 @@ const Data = () => {
 
     return (
         <div>
-            {/*<CityInput onSubmit={setCity} loading={loading}/>*/}
+            {/*<CityInput onSubmit={setCity(city)} loading={loading}/>*/}
             <Weather data={current} lastUpdated={lastUpdated} error={error}/>
-            <HourlyForecast city={city} take={6} lang="en"/>
+            <HourlyForecast city={city} take={3} lang="en"/>
         </div>
     );
 };
